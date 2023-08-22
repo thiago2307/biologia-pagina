@@ -1,7 +1,10 @@
 const mongoose = require("mongoose");
-const app = require("./app");
+const express = require('express');
+const path = require('path');
+const morgan = require('morgan');
+const app = express();
+const myRouter = require('./routes/myRouter');
 const dotenv = require("dotenv");
-const Evento = require("./models/Evento");
 
 dotenv.config({ path: "./config.env" });
 
@@ -19,18 +22,21 @@ mongoose.connect(DB, {
     console.log("No se pudo conectar a la base de datos");
 });
 
-Evento.find({}, (err, eventos) => {
-    if (err) {
-        console.error("Error al obtener los eventos:", err);
-        return;
-    } else {
-        console.log("Eventos:", eventos);
+app.set('view engine', 'ejs');
+app.set('views', path.join(__dirname, 'views'));
+app.use(morgan('dev'));
+app.use(express.json());
+app.use(express.urlencoded({ extended: true })); 
+app.use(express.static(path.join(__dirname, 'public')));
 
-        app.locals.eventos = eventos;
-    }
+app.use('/', myRouter);
+app.use("/no", myRouter);
+
+// Agrega el código HTML, CSS y JavaScript aquí
+app.get('/', (req, res) => {
+    res.render('index'); // Cambia 'index' por el nombre de tu archivo .ejs
 });
 
-//localhost:3000/eventos
 const port = 3000;
 app.listen(port, () => {
     console.log(`Servidor corriendo en el puerto ${port} correctamente`);

@@ -4,12 +4,11 @@ const Schema = mongoose.Schema;
 const CadenasSchema = new Schema({
     la_cadena: {
         type: String, 
-        require :true
+        require: true
     },
-
     fecha_hora: {
         type: Date,
-        require :true
+        require: true
     }
 });
 
